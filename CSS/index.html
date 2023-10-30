@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <title>Miya MaaS</title>
+    <link rel="stylesheet" type="text/css" href="https://tsunakawashunya.github.io/MiyaMaaS/css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1are7B4Dd4XE-60X4eiPvSX4iCLu4FK8&callback=initMap" async defer></script>
+</head>
+<body>
+
+    <!---------- ヘッダーは統一 ---------->
+    <header>
+        <div id="hamburger-menu"><i class="fas fa-bars"></i></div>
+        <h1 id="MiyaMaaS">Miya MaaS</h1>
+        <div id="settings-icon"><i class="fas fa-cog"></i></div>
+    </header>
+    
+    <div id="menu-container" class="hidden">
+        <ul id="menu-list">
+            <li><a href="#" id="how-to-use">使い方</a></li>
+            <li><a href="#" id="register">新規会員登録</a></li>
+            <li><a href="#" id="login">ログイン</a></li>
+            <li><a href="#" id="user-guide">使い方ガイド</a></li>
+        </ul>
+    </div>
+    <!---------- ヘッダーは統一 ---------->
+
+    
+    <main>
+        <div id="search-box">
+            <input type="text" id="search-input" placeholder="検索">
+            <button id="voice-input-button"><i class="fas fa-microphone"></i></button>
+            <div id="route-options">
+                <input type="text" id="departure-input" placeholder="出発地"></br>
+                <i id="down-arrow" class="fas fa-arrow-down fa-2x"></i></br>
+                <input type="text" id="arrival-input" placeholder="到着地">
+                <div id="transport-options">
+                    <label class="transport-option">
+                        <input type="checkbox" name="transport" value="bus">
+                        <div class="icon-text">
+                            <i class="fas fa-bus"></i>
+                            <span>バス</span>
+                        </div>
+                    </label>
+                    <label class="transport-option">
+                        <input type="checkbox" name="transport" value="train">
+                        <div class="icon-text">
+                            <i class="fas fa-train"></i>
+                            <span>電車</span>
+                        </div>
+                    </label>
+                    <label class="transport-option">
+                        <input type="checkbox" name="transport" value="lrt">
+                        <div class="icon-text">
+                            <i class="fas fa-subway"></i>
+                            <span>LRT</span>
+                        </div>
+                    </label>
+                    <label class="transport-option">
+                        <input type="checkbox" name="transport" value="share-cycle">
+                        <div class="icon-text">
+                            <i class="fas fa-bicycle"></i>
+                            <span>シェアサイクル</span>
+                        </div>
+                    </label>
+                    <label class="transport-option">
+                        <input type="checkbox" name="transport" value="taxi">
+                        <div class="icon-text">
+                            <i class="fas fa-taxi"></i>
+                            <span>タクシー</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <button id="search-button">検索</button>
+        <div id="map"></div>
+        <div id="location-options">
+            <input type="radio" id="departure-radio" name="location" value="departure">
+            <label for="departure-radio">出発</label>
+            <i id="down-arrow" class="fas fa-arrow-right fa-2x"></i>
+            <input type="radio" id="arrival-radio" name="location" value="arrival">
+            <label for="arrival-radio">到着</label>
+            <!-- 検索結果 -->
+            <br>
+            <div id="search-result-container">
+            </div>
+            <!-- 検索結果 -->
+        </div>
+    </main>
+            
+    <footer>
+        <a href="#">お問い合わせ</a>
+    </footer>
+    <script src="https://tsunakawashunya.github.io/MiyaMaaS/js/mixway.js"></script>
+    <script src="https://tsunakawashunya.github.io/MiyaMaaS/js/script.js"></script>
+</body>
+</html>
