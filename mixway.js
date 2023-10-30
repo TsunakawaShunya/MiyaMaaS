@@ -83,24 +83,22 @@ function initMap() {
 
   // マップがクリックされたとき
   map.addListener('click', function(event) {
-    var isDeparture = document.getElementById('departure-radio').checked;
-    var isArrival = document.getElementById('arrival-radio').checked;
+    let isDeparture = document.getElementById('departure-radio').checked;
+    let isArrival = document.getElementById('arrival-radio').checked;
 
     if (isDeparture) {
       // 既存の出発地ピンを削除
       if (departureMarker) {
         departureMarker.setMap(null);
       }
-      
-
+    
       // 出発地の座標を取得
       departureLat = event.latLng.lat();
       departureLng = event.latLng.lng();
-
-      
-      //マーカ-を追加
-      departureMarker = addMarker(map,departureLat,departureLng,'出発地',depatureIcon);
-
+    
+      // マーカーを追加
+      departureMarker = addMarker(map, departureLat, departureLng, '出発地', depatureIcon);
+    
       // 出発地のinputタグに座標を記入
       departureInput.value = departureLat + ', ' + departureLng;
     } else if (isArrival) {
@@ -108,60 +106,54 @@ function initMap() {
       if (arrivalMarker) {
         arrivalMarker.setMap(null);
       }
-  
+    
       // 到着地の座標を取得
       arrivalLat = event.latLng.lat();
-      arrivalLng = event.latLng.lng();     
+      arrivalLng = event.latLng.lng();
       // マーカを追加
-      arrivalMarker = addMarker(map,arrivalLat,arrivalLng,'到着地',arrivalIcon);
-
-
+      arrivalMarker = addMarker(map, arrivalLat, arrivalLng, '到着地', arrivalIcon);
+    
       // 到着地のinputタグに座標を記入
       arrivalInput.value = arrivalLat + ', ' + arrivalLng;
     }
   });
 
-  // 検索ボタンがクリックされたときの処理
-  const searchButton = document.getElementById('search-button');
-  // 検索を押したら
-  searchButton.addEventListener('click', () => {
-    const departureInput = document.getElementById('departure-input').value;
-    const arrivalInput = document.getElementById('arrival-input').value;
-
-    console.log(departureLat, ",", departureLng);
-    console.log(departureInput.value);
-    console.log(arrivalInput.value);
-
-    if (departureInput.value !== undefined && arrivalInput.value !== undefined) {
+  // 出発地が入力されたとき
+  departureInput.addEventListener('change', () => {
+    if (typeof departureInput.value === 'string' && departureInput.value !== '') {
       // 入力が文字列だった場合ジオコーディング
-      if (typeof departureInput === 'string' && typeof arrivalInput === 'string') {
-        // 出発地のジオコーディング
-        geocoder(departureInput, function (result) {
-          departureLat = result.lat;
-          departureLng = result.lng;
-  
-          // 到着地のジオコーディング
-          geocoder(destinationInput, function (result) {
-            arrivalLat = result.lat;
-            arrivalLng = result.lng;
-  
-            request(departureLat, departureLng, arrivalLat, arrivalLng);
-            departureMarker = addMarker(map,departureLat,departureLng,'出発地',depatureIcon);
-            arrivalMarker = addMarker(map,arrivalLat,arrivalLng,'到着地',arrivalIcon);
-          });
-        });
-      } else {
-        // 緯度経度だったらそのままリクエスト
-        request(departureLat, departureLng, arrivalLat, arrivalLng);
+      geocoder(departureInput.value, function (result) {
+        departureLat = result.lat;
+        departureLng = result.lng;
+            // ピンを更新
+        if (departureMarker) {
+          departureMarker.setMap(null);
+        }
         departureMarker = addMarker(map,departureLat,departureLng,'出発地',depatureIcon);
-        arrivalMarker = addMarker(map,arrivalLat,arrivalLng,'到着地',arrivalIcon);
-      }
-    } else {
-      // 入力なしの場合、デフォルトで経路検索
-      request(departureLat, departureLng, arrivalLat, arrivalLng);
-      departureMarker = addMarker(map,departureLat,departureLng,'出発地',depatureIcon);
-      arrivalMarker = addMarker(map,arrivalLat,arrivalLng,'到着地',arrivalIcon);
+      });
     }
+  });
+
+  // 到着地が入力されたとき
+  arrivalInput.addEventListener('change', () => {
+    if (typeof arrivalInput.value === 'string' && arrivalInput.value !== '') {
+      // 到着地のジオコーディング
+      geocoder(arrivalInput.value, function (result) {
+        arrivalLat = result.lat;
+        arrivalLng = result.lng;
+        // ピンを更新
+        if (arrivalMarker) {
+          arrivalMarker.setMap(null);
+        }
+        arrivalMarker = addMarker(map,arrivalLat,arrivalLng,'到着地',arrivalIcon);    
+      });
+    }
+  });
+
+  // 検索ボタンがクリックされたとき
+  const searchButton = document.getElementById('search-button');
+  searchButton.addEventListener('click', () => {
+    request(departureLat, departureLng, arrivalLat, arrivalLng);
   });
 }
 
@@ -183,18 +175,19 @@ function addMarker(map,lat,lng,title, icon){
 }
 
 
-//住所や地名から緯度経度に変換（ジオコーディング）
+// 住所や地名から緯度経度に変換（ジオコーディング）
 function geocoder(address, callback) {
   const geocoder = new google.maps.Geocoder();
   geocoder.geocode({ 'address': address }, function(results, status) {
-    if (status === 'OK' && results[0]) {
+    if (status === 'OK' && results.length > 0) {
       const location = results[0].geometry.location;
       const lat = location.lat();
       const lng = location.lng();
       callback({ lat, lng });
+      console.log(lat, ",", lng);
     } else {
       console.log('ジオコーディングエラー: ' + status);
-      callback(null); 
+      callback(null);
     }
   });
 }
