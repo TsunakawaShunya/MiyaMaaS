@@ -84,19 +84,27 @@ a {
 
 #search-box {
     margin: 20px;
+    
 }
 
 #route-options {
     margin: 10px 0;
 }
-
+#voice-input-button{
+    padding:3px;
+    font-size: 15px;
+}
 /* 検索と出発地と到着地*/
 #search-input {
     width: 60%;
+    font-size: 15px;
+    padding:3px;
 }
 
 #departure-input, #arrival-input {
     width: 80%;
+    font-size: 15px;
+    padding:3px;
 }
 
 #down-arrow {
@@ -104,12 +112,25 @@ a {
 }
 
 /* 条件 */
-#transport-options {
+#transport-options{
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+#transport-options-1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin: 10px auto;
+    width: 100%;
+}
+
+#transport-options-2 {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width:100%;
 }
 
 .transport-option {
@@ -120,8 +141,10 @@ a {
     text-align: center;
     background-color: white;
     border: 3px solid hsl(0, 0%, 0%);
-    width: calc(33.33% - 10px); /* 3つの要素を1行に */
-    max-width: calc(50% - 5px); /* 2つの要素を1行に */
+    width: 25%;
+    border-radius: 10px;
+    /* width: calc(33.33% - 10px); 3つの要素を1行に */
+    /* max-width: calc(50% - 5px); 2つの要素を1行に */
 }
 
 .icon-text {
@@ -148,11 +171,13 @@ a {
 }
 
 #search-button {
+    width: 15%;
+    border-radius: 10px;
     padding: 15px 30px;
     font-size: 18px;
     background-color: #eee8aa; /* デフォルトの背景色 */
     color: black; /* デフォルトのテキスト色 */
-    border: none;
+    border: solid 2px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s; /* 背景色とテキスト色の変化をアニメーション化 */
 }
@@ -177,37 +202,64 @@ a {
 
 #location-options label[for="departure-radio"] {
     font-size: 16px;
+    width: 10%;
     margin: 5%;
-    padding: 5px;
-    border: 3px solid rgb(231, 97, 97);
-    background-color: white;
+    padding: 8px 5%;
+    border: 3px solid rgb(255, 58, 58);
+    background-color: rgb(255, 255, 255);
 }
 
 #location-options label[for="arrival-radio"] {
     font-size: 16px;
+    width: 10%;
     margin: 5%;
-    padding: 5px;
+    padding: 8px 5%;
     border: 3px solid rgb(81, 81, 233);
-    background-color: white;
+    background-color: rgb(255, 255, 255);
 }
 
 /* 検索結果 */
 #search-result-container {
     display: none; /* 初めは非表示にする */
-    display: flex; /* 水平方向の配置を設定 */
+    /* 水平方向の配置を設定 */
     justify-content: center; /* 中央寄せを設定 */
     margin: 3%;
-    border: 3px solid black;
 }
 
 .result-list {
-    font-size: 18px;
+    display:flex;
+    justify-content: space-between;
+    font-size: 16px;
     margin: 1%;
     background-color: white;
-    border: 3px solid black;
     color: black;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s; /* 背景色とテキスト色の変化をアニメーション化 */
+}
+.number{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+    width:5%;
+    color:white;
+    background-color: rgb(121, 120, 124);
+}
+.route-info{
+    width:85%;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+.time{
+    font-size: 20px;
+}
+.allow{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: space-around;
+    width:5%;
 }
 
 .result-list:hover {
@@ -218,6 +270,7 @@ a {
     text-align: left;
     padding: 1%;
     background-color: rgb(201, 201, 201); /* デフォルトの背景色 */
+    margin-bottom: 1%;
 }
 
 #goto-lists-button {
@@ -226,35 +279,58 @@ a {
 
 .result-detail {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    margin: 20px;
+}
+.detail_container{
+    border-radius: 10px;
+    width:100%;
+    display: flex;
+    flex-direction: row;
+    background-color: white;
+    height: 70px;
 }
 
 .time {
-    width: 30%;
+    display: flex;
+    text-align:left;
+    margin-right:5%;
+    align-items: center;
+}
+.time-container{
+    margin-left:5%;
 }
 
 .point {
+    display: flex;
     width: 40%;
     font-size: 20px;
     font-weight: bold;
     text-align: center;
+    align-items: center;
 }
 
 .line {
-    text-align: right;
-    margin-top: 100px;
-    width: 30%;
+    width: 77%;
+    display: flex;
+    align-items: center;
+    color:black;
+    padding-left:10%;
+    padding-top:1%;
+    padding-bottom:1%;
+    border-left: solid 1px black;
 }
 
 #guide-start-button {
+    width: 20%;
     padding: 1%;
-    font-size: 30px;
+    font-size: 25px;
     margin: 1%;
     background-color: #eee8aa; /* デフォルトの背景色 */
-    color: black; /* デフォルトのテキスト色 */
-    border: 3px solid black;
+    color: rgb(39, 39, 39); /* デフォルトのテキスト色 */
+    border-radius: 10px;
+    border: solid 1px gray;
+    box-shadow: none; 
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s; /* 背景色とテキスト色の変化をアニメーション化 */
 }
@@ -265,6 +341,7 @@ a {
 }
 
 #detail-button-area {
+    margin-top:1%;
     background-color: rgb(201, 201, 201); /* デフォルトの背景色 */
     text-align: center;
 }
