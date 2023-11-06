@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <title>Miya MaaS</title>
-    <link rel="stylesheet" type="text/css" href="https://tsunakawashunya.github.io/MiyaMaaS/index.css">
+    <link rel="stylesheet" type="text/css" href="../css/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1are7B4Dd4XE-60X4eiPvSX4iCLu4FK8&callback=initMap" async defer></script>
 </head>
@@ -35,45 +35,50 @@
                 <i id="down-arrow" class="fas fa-arrow-down fa-2x"></i></br>
                 <input type="text" id="arrival-input" placeholder="到着地">
                 <div id="transport-options">
-                    <label class="transport-option">
-                        <input type="checkbox" name="transport" value="bus">
-                        <div class="icon-text">
-                            <i class="fas fa-bus"></i>
-                            <span>バス</span>
-                        </div>
-                    </label>
-                    <label class="transport-option">
-                        <input type="checkbox" name="transport" value="train">
-                        <div class="icon-text">
-                            <i class="fas fa-train"></i>
-                            <span>電車</span>
-                        </div>
-                    </label>
-                    <label class="transport-option">
-                        <input type="checkbox" name="transport" value="lrt">
-                        <div class="icon-text">
-                            <i class="fas fa-subway"></i>
-                            <span>LRT</span>
-                        </div>
-                    </label>
-                    <label class="transport-option">
-                        <input type="checkbox" name="transport" value="share-cycle">
-                        <div class="icon-text">
-                            <i class="fas fa-bicycle"></i>
-                            <span>シェアサイクル</span>
-                        </div>
-                    </label>
-                    <label class="transport-option">
-                        <input type="checkbox" name="transport" value="taxi">
-                        <div class="icon-text">
-                            <i class="fas fa-taxi"></i>
-                            <span>タクシー</span>
-                        </div>
-                    </label>
+                    <div id="transport-options-1">
+                        <label class="transport-option">
+                            <input type="checkbox" name="transport" value="bus" id="busCheckbox">
+                            <div class="icon-text">
+                                <i class="fas fa-bus"></i>
+                                <span>バス</span>
+                            </div>
+                        </label>
+                        <label class="transport-option">
+                            <input type="checkbox" name="transport" value="train">
+                            <div class="icon-text">
+                                <i class="fas fa-train"></i>
+                                <span>電車</span>
+                            </div>
+                        </label>
+                        <label class="transport-option">
+                            <input type="checkbox" name="transport" value="lrt">
+                            <div class="icon-text">
+                                <i class="fas fa-subway"></i>
+                                <span>LRT</span>
+                            </div>
+                        </label>
+                    </div>
+                    <div id="transport-options-2">
+                        <label class="transport-option">
+                            <input type="checkbox" name="transport" value="share-cycle">
+                            <div class="icon-text">
+                                <i class="fas fa-bicycle"></i>
+                                <span>シェアサイクル</span>
+                            </div>
+                        </label>
+                        <label class="transport-option">
+                            <input type="checkbox" name="transport" value="taxi">
+                            <div class="icon-text">
+                                <i class="fas fa-taxi"></i>
+                                <span>タクシー</span>
+                            </div>
+                        </label>
+                    </div>
                 </div>
+                
             </div>
         </div>
-        <button id="search-button">検索</button>
+        <button id="search-button">検索  <i class="fa-solid fa-magnifying-glass"></i></button>
         <div id="map"></div>
         <div id="location-options">
             <input type="radio" id="departure-radio" name="location" value="departure">
@@ -90,9 +95,9 @@
     </main>
             
     <footer>
-        <a href="#">お問い合わせ</a>
+        <a href="#">Contact</a>
     </footer>
-    <script src="https://tsunakawashunya.github.io/MiyaMaaS/mixway.js"></script>
-    <script src="https://tsunakawashunya.github.io/MiyaMaaS/script.js"></script>
+    <script src="../js/mixway.js"></script>
+    <script src="../js/script.js"></script>
 </body>
 </html>
