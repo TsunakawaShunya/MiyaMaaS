@@ -41,7 +41,7 @@ const depatureIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';    
 const arrivalIcon = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';    //到着地アイコン
 
 const searchResultContainer = document.getElementById("search-result-container");   // 検索結果コンテナ
-
+let eventMarkers= [];
 
 
 
@@ -105,7 +105,13 @@ function initMap() {
       // 既存の到着地ピンを削除
       if (arrivalMarker) {
         arrivalMarker.setMap(null);
+        // イベント情報削除
+        eventMarkers.forEach(marker => {
+          marker.setMap(null);
+        });
+        eventMarkers = []; // イベント情報を格納する配列を空にする
       }
+
     
       // 到着地の座標を取得
       arrivalLat = event.latLng.lat();
@@ -153,7 +159,12 @@ function initMap() {
   // 検索ボタンがクリックされたとき
   const searchButton = document.getElementById('search-button');
   searchButton.addEventListener('click', () => {
-    request(departureLat, departureLng, arrivalLat, arrivalLng);
+    // 詳細探索条件データを設定
+    const conditionDetail = returnCondition();
+    //console.log(conditionDetail);
+    request(departureLat, departureLng, arrivalLat, arrivalLng, conditionDetail);
+    // 周辺情報の表示
+    neighborhoodInformation();
   });
 }
 
@@ -193,11 +204,44 @@ function geocoder(address, callback) {
 }
 
 
+// 詳細探索条件データを返す
+// fetchが非同期だからうまくいってない（デフォルトが返ってしまう）
+function returnCondition() {
+  // 詳細探索条件データ
+  let conditionStr = 'T32212332323191:F33211221200001:A23121141:';
+
+  const busCheckbox = document.getElementById("busCheckbox");
+  if(busCheckbox.checked) {
+    const requestUrl = `${apiBaseUrl}${courseConditionToolEndpoint}?key=${mixwayAPIKey}&localBusOnly=true`;
+    fetch(requestUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        conditionStr = data.ResultSet.Condition;
+      })
+      .catch(error => {
+        console.error('APIリクエストエラー（経路条件探索）:', error);
+      });
+  }
+
+  return conditionStr;
+
+}
+
+
+
+
+
+
 //APIをリクエストする関数
-function request(departureLat, departureLng, arrivalLat, arrivalLng) {
+function request(departureLat, departureLng, arrivalLat, arrivalLng, conditionDetail) {
   // URLリクエストの例
   // https://mixway.ekispert.jp/v1/json/search/course/extreme?key=[アクセスキー]&viaList=35.6585805,139.7454329:35.6715869,139.6967028
-  const requestUrl = `${apiBaseUrl}${routeSearchEndpoint}?key=${mixwayAPIKey}&viaList=${departureLat},${departureLng}:${arrivalLat},${arrivalLng}`;
+  const requestUrl = `${apiBaseUrl}${routeSearchEndpoint}?key=${mixwayAPIKey}&viaList=${departureLat},${departureLng}:${arrivalLat},${arrivalLng}&conditionDetail=${conditionDetail}`;
   fetch(requestUrl)
     .then(response => {
       if (!response.ok) {
@@ -211,7 +255,7 @@ function request(departureLat, departureLng, arrivalLat, arrivalLng) {
       displayRouteList(data.ResultSet.Course);
     })
     .catch(error => {
-      console.error('APIリクエストエラー:', error);
+      console.error('APIリクエストエラー（経路探索）:', error);
     });
 }
 
@@ -250,15 +294,19 @@ function displayRouteList(courseData) {
     // list中身
     const routeInfo = `
       <div class="result-list" data-index="${i}">
-        <p>ID: ${i}</p>
-        <p>
-          ${departureTime} -> ${arrivalTime}
-        </p>
-        <p>経路: 出発地→${stationInfo.join("→")}→目的地</p>
-        <p>金額: ${totalPrice}  円</p>
+        <div class='number'>
+          <p>${i + 1}</p>
+        </div>
+        <div class='route-info'>
+          <div class = 'time'><p>${departureTime} → ${arrivalTime}</p></div>
+          <p>経路: 出発地 → ${stationInfo.join(" → ")} → 目的地</p>
+          <p><i class="fa-solid fa-wallet"></i> ${totalPrice} 円</p>
+        </div>
+        <div class='allow'>
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
       </div>
     `;
-
     resultHTML.push(routeInfo);
   }
 
@@ -308,7 +356,7 @@ function displayRouteDetails(course) {
     <div id="result-detail-entire">
       <button id="goto-lists-button"><<一覧へ</button></br>
       <p>${departureDate}   ${departureTime} → ${arrivalTime}</p>
-      <p>${totalPrice} 円</p>
+      <p><i class="fa-solid fa-wallet"></i> ${totalPrice} 円</p>
     </div>
   `);
 
@@ -322,15 +370,15 @@ function displayRouteDetails(course) {
 
       detailHTML.push(`
         <div class="result-detail">
-          <div class="time">
-            ${pointDepartureTime} 発
-          </div>
-          <div class="point">
-            ${pointName}
+          <div class= 'detail_container'>
+            <div class="time time-container">
+              ${pointDepartureTime} 
+            </div>
+            <div class="point">
+              ${pointName}
+            </div>
           </div>
           <div class="line">
-            <br>
-            <br>
             ${lineName}
           </div>
         </div>
@@ -342,15 +390,15 @@ function displayRouteDetails(course) {
     
       detailHTML.push(`
         <div class="result-detail">
-          <div class="time">
-            ${pointArrivalTime} 着</br>
+          <div class= 'detail_container'>
+            <div class="time time-container">
+              ${pointArrivalTime} </br>
+            </div>
+            <div class="point">
+              ${pointName}</br>
+            </div>
           </div>
-          <div class="point">
-            ${pointName}</br>
-          </div>
-          <div class="line">
-            <!-- 空の <div class="line"> を挿入 -->
-          </div>
+          
         </div>
       `);
     } else if (course.Route.Point[i].Station == null) {
@@ -362,17 +410,17 @@ function displayRouteDetails(course) {
 
       detailHTML.push(`
         <div class="result-detail">
-          <div class="time">
-            ${pointArrivalTime} 着</br>
-            ${pointDepartureTime} 発</br>
-          </div>
-          <div class="point">
-            ${pointName}
+          <div class= 'detail_container'>
+            <div class="time time-container">
+              ${pointArrivalTime} </br>
+              ${pointDepartureTime} </br>
+            </div>
+            <div class="point">
+              ${pointName}
+            </div>
           </div>
           <div class="line">
-            <br>
-            <br>
-            ${lineName}
+            <p><i class="fa-solid fa-person-walking"></i></p>${lineName}
           </div>
         </div>
       `);
@@ -386,16 +434,17 @@ function displayRouteDetails(course) {
 
       detailHTML.push(`
         <div class="result-detail">
-          <div class="time">
-            ${nodeArrivalTime} 着</br>
-            ${nodeDepartureTime} 発</br>
+        <div class= 'detail_container'>
+          <div class="time time-container">
+            ${nodeArrivalTime} </br>
+            ${nodeDepartureTime} </br>
           </div>
           <div class="point">
             ${pointName}
           </div> 
+        </div>
+          
           <div class="line">
-            <br>
-            <br>
             ${lineName}
           </div>
         </div>
@@ -406,7 +455,7 @@ function displayRouteDetails(course) {
   // 案内を開始ボタン
   detailHTML.push(`
     <div id="detail-button-area">
-      <button id="guide-start-button">案内を開始</button>
+      <button id="guide-start-button"><i class="fa-solid fa-route"></i> 案内を開始</button>
     </div>
   `) ;
 
@@ -430,6 +479,39 @@ function startNavigation(course) {
   console.log(course);
 }
 
+// 周辺情報の表示
+function neighborhoodInformation() {
+  // 到着地の緯度と経度
+  const arrivalLocation = { lat: arrivalLat, lng: arrivalLng };
+ 
+  for (let i = 0; i < 4; i++) {
+    // 周辺1km以内にランダムに
+    const placeLatLng = {
+      lat: arrivalLocation.lat + (Math.random() * 0.009) - 0.0045,
+      lng: arrivalLocation.lng + (Math.random() * 0.009) - 0.0045
+    };
+
+
+    // マーカーを地図に追加
+    const marker = addMarker(map, placeLatLng.lat, placeLatLng.lng, 'イベント', 'https://maps.google.com/mapfiles/kml/pal3/icon35.png');
+    eventMarkers.push(marker);
+
+
+      // マーカーをクリックしたときに情報ウィンドウを表示
+      marker.addListener('click', function() {
+        const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div>
+            <h3>イベント名</h3>
+            <p>場所: 適当な住所</p>
+            <p>詳細: 適当な詳細情報</p>
+          </div>
+        `
+      });
+      infoWindow.open(map, marker);
+    });
+  }
+}
 
 /* 残り */
 /* 経路詳細、検索、経路図示、条件絞り込み、並び替え */
