@@ -338,7 +338,6 @@ function displayRouteList(courseData) {
 }
 
 
-// ----------------デザインと行のずれ、移動方法------------------------
 // 経路詳細の表示関数
 function displayRouteDetails(course) {
   const detailHTML = [];    //detailの中身
@@ -481,11 +480,6 @@ function displayRouteDetails(course) {
 }
 
 
-// --------------------やるところ---------------------
-// 経路案内の関数
-function startNavigation(course) {
-  console.log(course);
-}
 
 // 周辺情報の表示
 function neighborhoodInformation() {
@@ -522,9 +516,14 @@ function neighborhoodInformation() {
 }
 
 
-
+// --------------------やるところ---------------------
 /* 残り */
 /* 経路詳細、検索、経路図示、条件絞り込み、並び替え */
+
+// 経路案内の関数
+function startNavigation(course) {
+  console.log(course);
+}
 
 
 // -------------------------------------------------------------------------------------------------------------------
