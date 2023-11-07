@@ -40,9 +40,13 @@ let courses;  // 取ってきた経路情報
 const depatureIcon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';    //出発地アイコン
 const arrivalIcon = 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png';    //到着地アイコン
 
+
 const searchResultContainer = document.getElementById("search-result-container");   // 検索結果コンテナ
 let eventMarkers= [];
 
+// 入力
+const departureInput = document.getElementById('departure-input');
+const arrivalInput = document.getElementById('arrival-input');
 
 
 // Google Map
@@ -51,6 +55,7 @@ function initMap() {
       center: { lat: 36.55914402240469, lng: 139.89844036622222 }, // 宇都宮駅
       zoom: 13,
   });
+  
 
   // 出発地のデフォルト座標を設定（現在の位置）
   if (navigator.geolocation) {
@@ -76,10 +81,7 @@ function initMap() {
   arrivalLat = 36.55914402240469;
   arrivalLng = 139.89844036622222;
   arrivalMarker = addMarker(map,arrivalLat,arrivalLng,'到着地',arrivalIcon );
-  
 
-  const departureInput = document.getElementById('departure-input');
-  const arrivalInput = document.getElementById('arrival-input');
 
   // マップがクリックされたとき
   map.addListener('click', function(event) {
@@ -109,7 +111,7 @@ function initMap() {
         eventMarkers.forEach(marker => {
           marker.setMap(null);
         });
-        eventMarkers = []; // イベント情報を格納する配列を空にする
+        eventMarkers = [];     
       }
 
     
@@ -131,7 +133,7 @@ function initMap() {
       geocoder(departureInput.value, function (result) {
         departureLat = result.lat;
         departureLng = result.lng;
-            // ピンを更新
+        // ピンを更新
         if (departureMarker) {
           departureMarker.setMap(null);
         }
@@ -142,8 +144,14 @@ function initMap() {
 
   // 到着地が入力されたとき
   arrivalInput.addEventListener('change', () => {
+    // イベント情報削除
+    eventMarkers.forEach(marker => {
+      marker.setMap(null);
+    });
+    eventMarkers = [];
+
+    // ジオコーディング
     if (typeof arrivalInput.value === 'string' && arrivalInput.value !== '') {
-      // 到着地のジオコーディング
       geocoder(arrivalInput.value, function (result) {
         arrivalLat = result.lat;
         arrivalLng = result.lng;
@@ -513,5 +521,140 @@ function neighborhoodInformation() {
   }
 }
 
+
+
 /* 残り */
 /* 経路詳細、検索、経路図示、条件絞り込み、並び替え */
+
+
+// -------------------------------------------------------------------------------------------------------------------
+// ハンバーガーメニュー
+document.addEventListener("DOMContentLoaded", function () {
+    const hamburgerMenu = document.getElementById("hamburger-menu");
+    const menuContainer = document.getElementById("menu-container");
+
+    hamburgerMenu.addEventListener("click", function () {
+        menuContainer.style.top = (hamburgerMenu.offsetTop + hamburgerMenu.offsetHeight) + "px";
+        menuContainer.classList.toggle("hidden");
+    });
+});
+
+
+
+// 条件をチェック
+document.addEventListener("DOMContentLoaded", function () {
+    const transportOptions = document.querySelectorAll(".transport-option input[type='checkbox']");
+
+    transportOptions.forEach(function (option) {
+        option.addEventListener("click", function () {
+            const label = option.parentElement; // チェックボックスの親要素の<label>要素を取得
+
+            if (option.checked) {
+                label.style.backgroundColor = "#eee8aa"; // チェックがオンの場合、背景をオレンジに
+            } else {
+                label.style.backgroundColor = "white"; // チェックがオフの場合、背景をデフォルトに戻す
+            }
+        });
+    });
+});
+
+
+
+// 音声入力
+const voiceInputButton = document.getElementById("voice-input-button");
+const searchInput = document.getElementById("search-input");
+const resultDisplay = document.getElementById("result-display"); // 結果を表示する要素
+document.addEventListener("DOMContentLoaded", function () {
+    if ('webkitSpeechRecognition' in window) {
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'ja-JP'; // 言語を設定（日本語）
+
+        voiceInputButton.addEventListener("click", function () {
+            recognition.start(); // 音声認識を開始
+
+            recognition.onresult = function (event) {
+                const transcript = event.results[0][0].transcript;
+                searchInput.value = transcript; // 音声をテキストボックスに設定
+            }
+
+            recognition.onend = function () {
+                recognition.stop();
+            }
+
+            recognition.onerror = function (event) {
+                console.error('音声認識エラー', event.error);
+                resultDisplay.textContent = "エラーが発生しました: " + event.error;
+            }
+        });
+    } else {
+        console.error('Web Speech APIはサポートされていません');
+        resultDisplay.textContent = "Web Speech APIはサポートされていません";
+    }
+});
+
+searchInput.addEventListener('change', () => {
+  const madeIndex = searchInput.value.indexOf('から');       // 「から」のindex
+  const karaIndex = searchInput.value.indexOf('まで');        // 「まで」のindex
+
+  // イベント情報削除
+  eventMarkers.forEach(marker => {
+    marker.setMap(null);
+  });
+  eventMarkers = [];
+  
+  // 「から」と「まで」が検索文字列に含まれているとき
+  if (madeIndex !== -1 && karaIndex !== -1) {
+    const departure = searchInput.value.substring(0, madeIndex).trim();
+    const arrival = searchInput.value.substring(madeIndex + 2, karaIndex).trim();
+        
+    departureInput.value = departure;
+    arrivalInput.value = arrival;
+  } else {
+    resultDisplay.textContent = "「[出発地]から[目的地]まで」とお声かけください（例：宇都宮大学から栃木県庁まで）";
+  }
+
+  if (typeof departureInput.value === 'string' && departureInput.value !== '') {
+    // 入力が文字列だった場合ジオコーディング
+    geocoder(departureInput.value, function (result) {
+      departureLat = result.lat;
+      departureLng = result.lng;
+      // ピンを更新
+      if (departureMarker) {
+        departureMarker.setMap(null);
+      }
+      departureMarker = addMarker(map,departureLat,departureLng,'出発地',depatureIcon);
+    });
+  }
+
+  if (typeof arrivalInput.value === 'string' && arrivalInput.value !== '') {
+    // 到着地のジオコーディング
+    geocoder(arrivalInput.value, function (result) {
+      arrivalLat = result.lat;
+      arrivalLng = result.lng;
+      // ピンを更新
+      if (arrivalMarker) {
+        arrivalMarker.setMap(null);
+      }
+      arrivalMarker = addMarker(map,arrivalLat,arrivalLng,'到着地',arrivalIcon);    
+    });
+  }
+})
+
+
+// 出発・到着の選択
+const departureButton = document.getElementById("departure-radio");
+const arrivalButton = document.getElementById("arrival-radio");
+
+departureButton.addEventListener("click", function () {
+    if (departureButton.checked) {
+        document.querySelector("label[for='departure-radio']").style.backgroundColor = "pink";
+        document.querySelector("label[for='arrival-radio']").style.backgroundColor = "";
+    }
+});
+
+arrivalButton.addEventListener("click", function () {
+    if (arrivalButton.checked) {
+        document.querySelector("label[for='arrival-radio']").style.backgroundColor = "lightblue";
+        document.querySelector("label[for='departure-radio']").style.backgroundColor = "";
+    }
+});
