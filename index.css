@@ -21,13 +21,13 @@ header {
 }
 
 #hamburger-menu, #settings-icon {
-    font-size: 24px;
+    font-size: 30px;
     cursor: pointer;
 }
 
 #MiyaMaaS {
     margin: 0;
-    font-size: 24px;
+    font-size: 30px;
 }
 
 .hidden {
@@ -54,6 +54,7 @@ header {
 
 #menu-list li {
     margin-bottom: 10px;
+    font-size: 30px;
 }
 
 /* main */
@@ -70,9 +71,10 @@ footer {
     padding: 1%;
 }
 
-a {
+#contact {
     color: white;
     text-decoration: none;
+    font-size: 20px;
 }
 
 
@@ -90,21 +92,31 @@ a {
 #route-options {
     margin: 10px 0;
 }
+
 #voice-input-button{
-    padding:3px;
-    font-size: 15px;
+    padding: 3px;
+    font-size: 30px;
 }
-/* 検索と出発地と到着地*/
+
+/* 検索と出発地と到着地 */
 #search-input {
-    width: 60%;
-    font-size: 15px;
+    width: 70%;
+    font-size: 30px;
     padding:3px;
+    margin: 3px;
+}
+
+#search-input-explanation {
+    font-size: 15px;
+    margin: 3px;
+    text-align: right;
 }
 
 #departure-input, #arrival-input {
-    width: 80%;
-    font-size: 15px;
+    width: 90%;
+    font-size: 30px;
     padding:3px;
+    margin: 20px;
 }
 
 #down-arrow {
@@ -143,6 +155,7 @@ a {
     border: 3px solid hsl(0, 0%, 0%);
     width: 25%;
     border-radius: 10px;
+    font-size: 20px;
     /* width: calc(33.33% - 10px); 3つの要素を1行に */
     /* max-width: calc(50% - 5px); 2つの要素を1行に */
 }
@@ -171,10 +184,10 @@ a {
 }
 
 #search-button {
-    width: 15%;
+    width: auto;
     border-radius: 10px;
     padding: 15px 30px;
-    font-size: 18px;
+    font-size: 30px;
     background-color: #eee8aa; /* デフォルトの背景色 */
     color: black; /* デフォルトのテキスト色 */
     border: solid 2px;
@@ -201,7 +214,7 @@ a {
 
 
 #location-options label[for="departure-radio"] {
-    font-size: 16px;
+    font-size: 25px;
     width: 10%;
     margin: 5%;
     padding: 8px 5%;
@@ -210,7 +223,7 @@ a {
 }
 
 #location-options label[for="arrival-radio"] {
-    font-size: 16px;
+    font-size: 25px;
     width: 10%;
     margin: 5%;
     padding: 8px 5%;
@@ -229,13 +242,13 @@ a {
 .result-list {
     display:flex;
     justify-content: space-between;
-    font-size: 16px;
     margin: 1%;
     background-color: white;
     color: black;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s; /* 背景色とテキスト色の変化をアニメーション化 */
 }
+
 .number{
     display: flex;
     text-align: center;
@@ -250,9 +263,10 @@ a {
     display: flex;
     flex-direction: column;
     text-align: left;
+    font-size: 25px;
 }
 .time{
-    font-size: 20px;
+    font-size: 35px;
 }
 .allow{
     display: flex;
@@ -261,7 +275,6 @@ a {
     justify-content: space-around;
     width:5%;
 }
-
 .result-list:hover {
     background-color: #c2c2c2; /* ホバー時の背景色 */
 }
@@ -271,10 +284,12 @@ a {
     padding: 1%;
     background-color: rgb(201, 201, 201); /* デフォルトの背景色 */
     margin-bottom: 1%;
+    font-size: 20px;
 }
 
 #goto-lists-button {
     margin: 1%;
+    font-size: 20px;
 }
 
 .result-detail {
@@ -299,12 +314,13 @@ a {
 }
 .time-container{
     margin-left:5%;
+    font-size: 25px;
 }
 
 .point {
     display: flex;
     width: 40%;
-    font-size: 20px;
+    font-size: 25px;
     font-weight: bold;
     text-align: center;
     align-items: center;
@@ -319,12 +335,13 @@ a {
     padding-top:1%;
     padding-bottom:1%;
     border-left: solid 1px black;
+    font-size: 25px;
 }
 
 #guide-start-button {
-    width: 20%;
+    width: auto;
     padding: 1%;
-    font-size: 25px;
+    font-size: 30px;
     margin: 1%;
     background-color: #eee8aa; /* デフォルトの背景色 */
     color: rgb(39, 39, 39); /* デフォルトのテキスト色 */
