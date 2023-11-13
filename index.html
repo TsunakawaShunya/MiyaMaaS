@@ -2,12 +2,13 @@
 <html lang="ja">
 <head>
     <title>Miya MaaS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=yes">
     <link rel="stylesheet" type="text/css" href="https://tsunakawashunya.github.io/MiyaMaaS/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1are7B4Dd4XE-60X4eiPvSX4iCLu4FK8&callback=initMap" async defer></script>
 </head>
 <body>
-
+    
     <!---------- ヘッダーは統一 ---------->
     <header>
         <div id="hamburger-menu"><i class="fas fa-bars"></i></div>
@@ -30,7 +31,7 @@
         <div id="search-box">
             <input type="text" id="search-input" placeholder="検索">
             <button id="voice-input-button"><i class="fas fa-microphone"></i></button>
-            <div id="search-input-explanation">「[出発地]から[目的地]まで」とお声かけください（例：宇都宮大学から栃木県庁まで）</div>
+            <div id="search-input-explanation">「[出発地]から[目的地]まで」とお声かけください </br>（手入力も可、例：宇都宮大学から栃木県庁まで）</div>
             <div id="route-options">
                 <input type="text" id="departure-input" placeholder="出発地"></br>
                 <i id="down-arrow" class="fas fa-arrow-down fa-2x"></i></br>
@@ -64,7 +65,7 @@
                             <input type="checkbox" name="transport" value="share-cycle">
                             <div class="icon-text">
                                 <i class="fas fa-bicycle"></i>
-                                <span>シェアサイクル</span>
+                                <span>シェア</br>サイクル</span>
                             </div>
                         </label>
                         <label class="transport-option">
@@ -82,17 +83,16 @@
         <button id="search-button">検索  <i class="fa-solid fa-magnifying-glass"></i></button>
         <div id="map"></div>
         <div id="location-options">
-            <input type="radio" id="departure-radio" name="location" value="departure">
+            <input type="radio" id="departure-radio" class="location-seect" name="location" value="departure">
             <label for="departure-radio">出発</label>
             <i id="down-arrow" class="fas fa-arrow-right fa-2x"></i>
-            <input type="radio" id="arrival-radio" name="location" value="arrival">
+            <input type="radio" id="arrival-radio" class="location-seect" name="location" value="arrival">
             <label for="arrival-radio">到着</label>
-            <!-- 検索結果 -->
-            <br>
-            <div id="search-result-container">
-            </div>
-            <!-- 検索結果 -->
         </div>
+        <!-- 検索結果 -->
+        <div id="recommend-information"></div>
+        <div id="search-result-container"></div>
+        <!-- 検索結果 --> 
     </main>
             
     <footer>
