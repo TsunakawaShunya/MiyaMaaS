@@ -1,3 +1,4 @@
+/* PC用 */
 body {
     font-family: cursive;
     margin: 0;
@@ -7,22 +8,23 @@ body {
 
 /* ヘッダー*/
 header {
+    height: 30px;
     background-color: #dfbe02;
     padding: 1%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
-}
-
-#header-content {
-    display: flex;
-    justify-content: space-between;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    top: 0;
+    left: 0;
 }
 
 #hamburger-menu, #settings-icon {
     font-size: 30px;
     cursor: pointer;
+    margin: 2%;
 }
 
 #MiyaMaaS {
@@ -50,15 +52,16 @@ header {
 #menu-list {
     list-style: none;
     padding: 0;
+    font-size: 25px;
 }
 
 #menu-list li {
     margin-bottom: 10px;
-    font-size: 30px;
 }
 
 /* main */
 main {
+    margin-top: 50px;
     background-color:  #e6e2e2;
     padding: 20px;
     text-align: center;
@@ -101,7 +104,7 @@ footer {
 /* 検索と出発地と到着地 */
 #search-input {
     width: 70%;
-    font-size: 30px;
+    font-size: 20px;
     padding:3px;
     margin: 3px;
 }
@@ -114,7 +117,7 @@ footer {
 
 #departure-input, #arrival-input {
     width: 90%;
-    font-size: 30px;
+    font-size: 20px;
     padding:3px;
     margin: 20px;
 }
@@ -184,7 +187,7 @@ footer {
 }
 
 #search-button {
-    width: auto;
+    width: 40%;
     border-radius: 10px;
     padding: 15px 30px;
     font-size: 30px;
@@ -196,7 +199,7 @@ footer {
 }
 
 #search-button:hover {
-    background-color: #dcd79e; /* ホバー時の背景色 */
+    background-color: #dfbe02; /* ホバー時の背景色 */
     color: black; /* ホバー時のテキスト色 */
 }
 
@@ -204,9 +207,14 @@ footer {
 #map {
     margin: 3%;
     height: 400px;
+    border: solid 3px;
 }
 
 /* ラジオボタン */
+#location-options{
+    margin: 20px
+}
+
 #location-options input[type="radio"] {
     display: none; /* チェックボックスを非表示にする */
     text-align: center;
@@ -239,6 +247,69 @@ footer {
     margin: 3%;
 }
 
+/* おすすめ表示 */
+#recommended-popup {
+    background-color: #dcd79e;
+    margin-top: 50px;
+    margin-bottom: 0px;
+    font-size: 30px
+}
+
+.recommendation {
+    margin-top: 0px;
+    border: 3px solid rgb(116, 114, 114);
+    margin-bottom: 1%;
+}
+
+.recommendation h3{
+    margin-top: 1%;
+    margin-bottom: 1%;
+    font-size: 30px;
+    text-align: left;
+    padding-left: 1%;
+    border-bottom: solid #575656 ;
+}
+
+.recommendation-item{
+    display: flex;
+    justify-content: space-around;
+    width:100%;
+}
+.recommendation-item1{
+    width: 40%;
+}
+.recommendation-item1 img{
+    width: 80%;
+}
+
+.fa-map-pin{
+    color: red;
+}
+.fa-circle-info{
+    color: blue;
+}
+.recommendation-item2{
+    text-align: left;
+    width:60%;
+    padding-left:1%;
+}
+.recommendation-map iframe{
+    width: 95%;
+    height: 300px;
+    margin: 0px 0px;
+}
+
+.recommendation-item2 h2{
+    font-size: 30px;
+}
+
+.recommendation p{
+    font-size: 20px;
+    margin-top: 0%;
+}
+
+
+/* 結果 */
 .result-list {
     display:flex;
     justify-content: space-between;
@@ -361,4 +432,472 @@ footer {
     margin-top:1%;
     background-color: rgb(201, 201, 201); /* デフォルトの背景色 */
     text-align: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*---------------------------モバイル端末用---------------------------*/
+
+@media screen and (max-width: 767px) {
+    body {
+        font-family: "Helvetica", "ヒラギノ丸ゴ ProN";
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    /* ヘッダー*/
+    header {
+        height: 40px;
+        background-color: #dfbe02;
+        padding: 1%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        z-index: 1;
+        width: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    #hamburger-menu, #settings-icon {
+        font-size: 30px;
+        cursor: pointer;
+        margin: 2%;
+    }
+
+    #MiyaMaaS {
+        margin: 0;
+        font-size: 30px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    /* メニューコンテナ */
+    #menu-container {
+        top: 100%;
+        text-align: left;
+        background-color: rgb(118, 114, 114);
+        border: 3px solid hsl(0, 0%, 0%);
+        border-radius: 5px;
+        margin-left: 2%;
+        padding: 5px;
+        z-index: 1000;
+    }
+
+    #menu-list {
+        list-style: none;
+        padding: 0;
+        font-size: 20px;
+    }
+
+    #menu-list li {
+        margin-bottom: 5px;
+    }
+
+    /* main */
+    main {
+        margin-top: 40px;
+        background-color:  #e6e2e2;
+        padding: 5px;
+        text-align: center;
+    }
+
+    /* フッター */
+    footer {
+        background-color: rgb(29, 29, 29);
+        text-align: right;
+        padding: 1%;
+    }
+
+    #contact {
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+        margin-right: 2%;
+    }
+
+
+
+    /* ---------ここから上は変更不可------------ */
+
+
+
+
+    #search-box {
+        margin: 10px;
+    }
+
+    #route-options {
+        margin: 10px 0;
+    }
+
+    #voice-input-button{
+        font-size: 20px;
+    }
+
+    /* 検索と出発地と到着地 */
+    #search-input {
+        width: 70%;
+        font-size: 20px;
+        padding:3px;
+        margin: 3px;
+    }
+
+    #search-input-explanation {
+        font-size: 13px;
+        margin-top: 1%;
+        text-align: right;
+    }
+
+    #departure-input, #arrival-input {
+        width: 90%;
+        font-size: 20px;
+        padding:3px;
+        margin: 5px;
+    }
+
+    #down-arrow {
+        text-align: center;
+    }
+
+    /* 条件 */
+    #transport-options{
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+
+    #transport-options-1 {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px auto;
+        width: 100%;
+    }
+
+    #transport-options-2 {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        width:100%;
+    }
+
+    .transport-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+        text-align: center;
+        background-color: white;
+        border: 3px solid hsl(0, 0%, 0%);
+        width: 25%;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .icon-text {
+        display: flex;
+        flex-direction: column; /* アイコンとテキストを垂直に配置 */
+        align-items: center;
+    }
+
+    .icon-text i {
+        margin: 5px auto; /* アイコンとテキストの間隔を設定 */
+    }
+
+    .transport-option label {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .transport-option input[type="checkbox"] {
+        display: none; /* チェックボックスを非表示にする */
+    }
+
+    #search-button {
+        width: 40%;
+        border-radius: 10px;
+        padding: 5px;
+        font-size: 30px;
+        background-color: #eee8aa;
+        color: black;
+        border: solid 2px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s; /* 背景色とテキスト色の変化をアニメーション化 */
+    }
+
+    #search-button:hover {
+        background-color: #dcd79e; /* ホバー時の背景色 */
+        color: black; /* ホバー時のテキスト色 */
+    }
+
+    /* google map */
+    #map {
+        margin: 20px;
+        height: 400px;
+        border: solid 3px;
+    }
+
+    /* ラジオボタン */
+    #location-options{
+        margin: 20px
+    }
+
+    #location-options input[type="radio"] {
+        text-align: center;
+    }
+
+    #location-options label[for="departure-radio"] {
+        font-size: 25px;
+        width: 10%;
+        border: 3px solid rgb(255, 58, 58);
+        background-color: rgb(255, 255, 255);
+        margin-bottom: 20px;
+    }
+
+    #location-options label[for="arrival-radio"] {
+        font-size: 25px;
+        width: 10%;
+        margin-bottom: 20px;
+        border: 3px solid rgb(81, 81, 233);
+        background-color: rgb(255, 255, 255);
+    }
+
+    /* 検索結果 */
+    #search-result-container {
+        display: none; /* 初めは非表示にする */
+        /* 水平方向の配置を設定 */
+        justify-content: center; /* 中央寄せを設定 */
+        margin: 10%, 2%;
+    }
+
+    /* おすすめ表示 */
+    #recommended-popup {
+        background-color: #dcd79e;
+        margin-top: 50px;
+        margin-bottom: 0px;
+        font-size: 25px;
+    }
+
+    .recommendation {
+        margin-top: 0px;
+        border: 3px solid rgb(116, 114, 114);
+        margin-bottom: 1%;
+    }
+
+    .recommendation h3{
+        margin-top: 1%;
+        margin-bottom: 1%;
+        font-size: 20px;
+        text-align: center;
+        padding-left: 1%;
+        border-bottom: solid #575656 ;
+    }
+
+    .recommendation-item{
+        justify-content: space-around;
+        width:100%;
+        text-align: center;
+    }
+    .recommendation-item1{
+        width: 90%;
+        text-align: center;
+        margin: 0 auto;
+    }
+    .recommendation-item1 img{
+        width: 100%;
+    }
+
+    .fa-map-pin{
+        color: rgb(219, 79, 79);
+    }
+    .fa-circle-info{
+        color: rgb(98, 98, 230);
+    }
+    .recommendation-item2{
+        box-sizing: border-box;
+        text-align: center;
+        width: 90%;
+        padding: 3px;
+        margin: 0 auto;
+    }
+    .recommendation-map iframe{
+        text-align: center;
+        margin: 0 auto;
+        padding: 0px;
+        width: 100%;
+        height: 30%;
+    }
+    .recommendation p{
+        font-size: 18px;
+        margin-top: 0%;
+    }
+
+    .result-list {
+        display:flex;
+        justify-content: space-between;
+        margin: 1%;
+        background-color: white;
+        color: black;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s; /* 背景色とテキスト色の変化をアニメーション化 */
+    }
+
+    .number{
+        display: flex;
+        text-align: center;
+        align-items: center;
+        justify-content: space-around;
+        width:5%;
+        color:white;
+        background-color: rgb(121, 120, 124);
+    }
+    .route-info{
+        width:85%;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+        font-size: 25px;
+    }
+    .time{
+        font-size: 35px;
+    }
+    .allow{
+        display: flex;
+        text-align: center;
+        align-items: center;
+        justify-content: space-around;
+        width:5%;
+    }
+    .result-list:hover {
+        background-color: #c2c2c2; /* ホバー時の背景色 */
+    }
+
+    #result-detail-entire {
+        text-align: left;
+        padding: 10px, 0px;
+        background-color: rgb(201, 201, 201); /* デフォルトの背景色 */
+        margin-bottom: 1%;
+        font-size: 20px;
+    }
+
+    #goto-lists-button {
+        font-size: 15px;
+    }
+
+    .result-detail {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .detail_container{
+        border-radius: 10px;
+        width:100%;
+        display: flex;
+        flex-direction: row;
+        background-color: white;
+        height: 70px;
+    }
+
+    .time {
+        display: flex;
+        text-align:left;
+        margin-right:5%;
+        align-items: center;
+    }
+    .time-container{
+        margin-left:5%;
+        font-size: 20px;
+    }
+
+    .point {
+        display: flex;
+        width: 70%;
+        font-size: 23px;
+        font-weight: bold;
+        text-align: center;
+        align-items: center;
+    }
+
+    .line {
+        width: 77%;
+        display: flex;
+        align-items: center;
+        color:black;
+        padding-left:10%;
+        padding-top:1%;
+        padding-bottom:1%;
+        border-left: solid 1px black;
+        font-size: 20px;
+    }
+
+    #guide-start-button {
+        width: auto;
+        padding: 1%;
+        font-size: 30px;
+        margin: 10px, 0px;
+        background-color: #eee8aa; /* デフォルトの背景色 */
+        color: rgb(39, 39, 39); /* デフォルトのテキスト色 */
+        border-radius: 10px;
+        border: solid 1px gray;
+        box-shadow: none; 
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s; /* 背景色とテキスト色の変化をアニメーション化 */
+    }
+
+    #guide-start-button:hover {
+        background-color: #dcd79e; /* ホバー時の背景色 */
+        color: black; /* ホバー時のテキスト色 */
+    }
+
+    #detail-button-area {
+        background-color: rgb(201, 201, 201); /* デフォルトの背景色 */
+        text-align: center;
+    }
+    .recommendation-item{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width:100%;
+    }
 }
