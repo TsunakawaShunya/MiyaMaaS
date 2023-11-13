@@ -137,10 +137,13 @@ function initMap() {
         if (departureMarker) {
           departureMarker.setMap(null);
         }
-        departureMarker = addMarker(map,departureLat,departureLng,'出発地',depatureIcon);
+        departureMarker = addMarker(map, departureLat, departureLng, '出発地', depatureIcon);
+        // 新しい座標を使用して経路を再度検索
+        searchForRoutes();
       });
     }
   });
+
 
   // 到着地が入力されたとき
   arrivalInput.addEventListener('change', () => {
@@ -159,26 +162,42 @@ function initMap() {
         if (arrivalMarker) {
           arrivalMarker.setMap(null);
         }
-        arrivalMarker = addMarker(map,arrivalLat,arrivalLng,'到着地',arrivalIcon);    
+        arrivalMarker = addMarker(map, arrivalLat, arrivalLng, '到着地', arrivalIcon);
       });
     }
   });
 
+
   // 検索ボタンがクリックされたとき
   const searchButton = document.getElementById('search-button');
   searchButton.addEventListener('click', () => {
-    // 詳細探索条件データを設定
-    const conditionDetail = returnCondition();
-    //console.log(conditionDetail);
-    request(departureLat, departureLng, arrivalLat, arrivalLng, conditionDetail);
-    // 周辺情報の表示
-    neighborhoodInformation();
+    if (existingPolylines.length > 0) {
+      clearRouteLines();
+    }
+    
+    // 新しい座標を使用して経路を再度検索
+    request(departureLat, departureLng, arrivalLat, arrivalLng)
+      .then(data => {
+        //recommandInformation();
+        displayRouteList(data);
+        return serializeData(data);
+      })
+      .then(routeData => {
+        return Promise.resolve(routeData);
+      })
+      .then(data => {
+        // 新しい経路を地図上に描画
+        drawRoutesOnMap(map, data);
+      })
+      .catch(error => {
+        console.error('APIリクエストエラー:', error);
+      });
   });
 }
 
 
 //マーカー立てる関数
-function addMarker(map,lat,lng,title, icon){
+function addMarker(map, lat, lng, title, icon){
   const marker = new google.maps.Marker({
     map: map,
     position: new google.maps.LatLng(lat,lng),
@@ -192,6 +211,8 @@ function addMarker(map,lat,lng,title, icon){
   }
   return marker;
 }
+
+
 
 
 // 住所や地名から緯度経度に変換（ジオコーディング）
@@ -246,27 +267,111 @@ function returnCondition() {
 
 
 //APIをリクエストする関数
-function request(departureLat, departureLng, arrivalLat, arrivalLng, conditionDetail) {
-  // URLリクエストの例
-  // https://mixway.ekispert.jp/v1/json/search/course/extreme?key=[アクセスキー]&viaList=35.6585805,139.7454329:35.6715869,139.6967028
-  const requestUrl = `${apiBaseUrl}${routeSearchEndpoint}?key=${mixwayAPIKey}&viaList=${departureLat},${departureLng}:${arrivalLat},${arrivalLng}&conditionDetail=${conditionDetail}`;
-  fetch(requestUrl)
-    .then(response => {
-      if (!response.ok) {
-        throw Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data);
-      // JSONデータからコース情報を取得
-      displayRouteList(data.ResultSet.Course);
-    })
-    .catch(error => {
-      console.error('APIリクエストエラー（経路探索）:', error);
-    });
+function request(departureLat, departureLng, arrivalLat, arrivalLng) {
+  return new Promise((resolve, reject) => {
+    const requestUrl = `${apiBaseUrl}${routeSearchEndpoint}?key=${mixwayAPIKey}&viaList=${departureLat},${departureLng}:${arrivalLat},${arrivalLng}`;
+    fetch(requestUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // JSONデータからコース情報を取得
+        resolve(data.ResultSet.Course); // コース情報を解決
+      })
+      .catch(error => {
+        console.error('APIリクエストエラー:', error);
+        reject(error); // エラーを拒否
+      });
+  });
+}
+  
+  
+serializeJSON = [];
+// シリアライズ経路データを持ってくる
+async function serializeData(data) {
+  serialize_list = [];
+  serialize_list = data.map(data => data.SerializeData);
+  shape_list = [];
+  for (let i = 0; i < serialize_list.length; i++) {
+    try {
+      const shape = await fetchRouteData(serialize_list[i]);
+      shape_list.push(shape);
+    } catch (error) {
+      console.error('エラー:', error);
+    }
+  }
+  serializeJSON = shape_list;
+  return serializeJSON;
 }
 
+// 経路のシェイプ情報をもってくる
+function fetchRouteData(serializeData) {
+  return new Promise((resolve, reject) => {
+    const requestURL = `${apiBaseUrl}${routeShapeInfoEndpoint}?key=${mixwayAPIKey}&serializeData=${serializeData}`;
+    fetch(requestURL)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const routeShape = data;
+        resolve(routeShape);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
+
+let existingPolylines = [];
+// 経路を地図上に描画する関数
+function drawRoutesOnMap(map, data) {
+  // 各経路に対して処理を行う
+  data.forEach(function (route) {
+    let course = route.ResultSet.Course.Line;
+    course.forEach(function (segment) {
+        let coordinates = segment.Element[0].Shape.map(function (point) {
+            return {
+                lat: parseFloat(point.GeoPoint.lati_d),
+                lng: parseFloat(point.GeoPoint.longi_d)
+            };
+        });
+
+        let color;
+        if (segment.Type.text === "walk") {
+          color = 'gray';
+        } else if (segment.Type.text === "bus") {
+          color = 'blue';
+        } else if (segment.Type.text === "train") {
+          color = 'green';
+        } 
+
+        let routePath = new google.maps.Polyline({
+            path: coordinates,
+            geodesic: true,
+            strokeColor: color,
+            strokeOpacity: 1.0,
+            strokeWeight: 5,
+            map: map
+        });
+        // 描画したポリラインを配列に追加
+        existingPolylines.push(routePath);
+    });
+  });
+}
+  
+// 既存のポリラインをクリアする関数
+function clearRouteLines() {
+  for (const polyline of existingPolylines) {
+    polyline.setMap(null); // ポリラインを地図から削除
+  }
+  existingPolylines = []; // 配列を空にする
+}
 
 // 結果を一覧表示する関数
 function displayRouteList(courseData) {
@@ -480,40 +585,54 @@ function displayRouteDetails(course) {
 }
 
 
+// 周辺のおすすめ情報表示
+function recommandInformation() {
+  // APIで取りたい
+  const recomendationIcon = 'https://maps.google.com/mapfiles/ms/micons/ltblu-pushpin.png';    // おすすめスポットのピン
+  const recommendations = [
+    { name: 'バスケットボール 3×3 Exibition', location: 'オリオンスクエア（〒320-0802 栃木県宇都宮市江野町８−３）', 
+    description: 'オリオンスクエアでバスケットボールの 3×3カップが開催中！アプリの提示で生ビール１本無料プレゼント！！', image: '../img/basketball.jpg' ,lat: '36.560484210838254', lng: '139.88240137301415',
+    map: '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3204.755959103913!2d139.87975701186488!3d36.55999678108683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x601f67bb880df487%3A0x7ff1dfffa872bc66!2z44Kq44Oq44Kq44Oz44K544Kv44Ko44KiKOWuh-mDveWuruW4guOCquODquOCquODs-W4guawkeW6g-WgtCk!5e0!3m2!1sja!2sjp!4v1699598200140!5m2!1sja!2sjp" " allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
+    icon: recomendationIcon},
+    { name: '宇都宮フリーマーケット', location: '宇都宮二荒山神社（〒320-0026 栃木県宇都宮市馬場通り１丁目１−１）', description: '二荒山神社で年に一度のフリーマーケットが開催中！掘り出し物ゲットできるかも！', lat: '36.56277178628818', lng: '139.88575362698583',
+    image: '../img/free.jpg',map : '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3204.6567501388995!2d139.88324347630137!3d36.562388481068126!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x601f67a4c9f2a7dd%3A0x3763927d31862f08!2z5a6H6YO95a6u5LqM6I2S5bGx56We56S-!5e0!3m2!1sja!2sjp!4v1699598849578!5m2!1sja!2sjp" " allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
+    icon: recomendationIcon},
+    { name: 'Miya Cafe', location: '宇都宮城址公園(〒320-0817 栃木県宇都宮市本丸町1-3520外)', description: 'Miya Cafe が新しいメニューを開発！午後の一息に暖かいコーヒーはいかが？', image: '../img/cafe.jpg' ,lat: '36.556210288566014', lng: '139.88520966137108',
+    map:'<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d12819.90939157757!2d139.8850377359609!3d36.55465912102357!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x601f679785d82d4d%3A0x15de47dd70284b76!2z5a6H6YO95a6u5Z-O5Z2A5YWs5ZyS!5e0!3m2!1sja!2sjp!4v1699599270334!5m2!1sja!2sjp" "allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>',
+    icon: recomendationIcon},
+  ];
 
-// 周辺情報の表示
-function neighborhoodInformation() {
-  // 到着地の緯度と経度
-  const arrivalLocation = { lat: arrivalLat, lng: arrivalLng };
- 
-  for (let i = 0; i < 4; i++) {
-    // 周辺1km以内にランダムに
-    const placeLatLng = {
-      lat: arrivalLocation.lat + (Math.random() * 0.009) - 0.0045,
-      lng: arrivalLocation.lng + (Math.random() * 0.009) - 0.0045
-    };
+  const recommendationHTML = []; // 配列を初期化
+  recommendationHTML.push(`
+    <h2 id="recommended-popup">あなたにおすすめのイベント情報</h2>
+  `);
 
-
-    // マーカーを地図に追加
-    const marker = addMarker(map, placeLatLng.lat, placeLatLng.lng, 'イベント', 'https://maps.google.com/mapfiles/kml/pal3/icon35.png');
-    eventMarkers.push(marker);
-
-
-      // マーカーをクリックしたときに情報ウィンドウを表示
-      marker.addListener('click', function() {
-        const infoWindow = new google.maps.InfoWindow({
-        content: `
-          <div>
-            <h3>イベント名</h3>
-            <p>場所: 適当な住所</p>
-            <p>詳細: 適当な詳細情報</p>
+  for (let i = 0; i < recommendations.length; i++) {
+    recommendationHTML.push(`
+      <div class="recommendation">
+        <h3>${recommendations[i].name}</h3>
+        <div class="recommendation-item">
+          <div class="recommendation-item1">
+            <img src="${recommendations[i].image}" alt="${recommendations[i].name}">
           </div>
-        `
-      });
-      infoWindow.open(map, marker);
-    });
+          <div class="recommendation-item2">
+            <p><i class="fa-solid fa-map-pin"></i> ${recommendations[i].location}</p>
+            <div class="recommendation-map">${recommendations[i].map}</div>
+            <p><i class="fa-solid fa-circle-info"></i> ${recommendations[i].description}</p>
+          </div>
+        </div>
+      </div>
+    `);
+
+    addMarker(map, recommendations[i].lat, recommendations[i].lng, recommendations[i].name, recommendations[i].icon)
   }
+
+
+  // 配列を文字列に結合して表示
+  const recommendInformation = document.getElementById("recommend-information");
+  recommendInformation.innerHTML = recommendationHTML.join('');
 }
+
 
 
 // --------------------やるところ---------------------
@@ -562,36 +681,35 @@ document.addEventListener("DOMContentLoaded", function () {
 // 音声入力
 const voiceInputButton = document.getElementById("voice-input-button");
 const searchInput = document.getElementById("search-input");
-const resultDisplay = document.getElementById("result-display"); // 結果を表示する要素
 document.addEventListener("DOMContentLoaded", function () {
     if ('webkitSpeechRecognition' in window) {
         const recognition = new webkitSpeechRecognition();
         recognition.lang = 'ja-JP'; // 言語を設定（日本語）
 
         voiceInputButton.addEventListener("click", function () {
-            recognition.start(); // 音声認識を開始
+          recognition.start(); // 音声認識を開始
 
             recognition.onresult = function (event) {
-                const transcript = event.results[0][0].transcript;
-                searchInput.value = transcript; // 音声をテキストボックスに設定
+              const transcript = event.results[0][0].transcript;
+              searchInput.value = transcript; // 音声をテキストボックスに設定
+              registInput();
             }
 
             recognition.onend = function () {
-                recognition.stop();
+              recognition.stop();
             }
 
             recognition.onerror = function (event) {
-                console.error('音声認識エラー', event.error);
-                resultDisplay.textContent = "エラーが発生しました: " + event.error;
+              console.error('音声認識エラー', event.error);
             }
         });
     } else {
         console.error('Web Speech APIはサポートされていません');
-        resultDisplay.textContent = "Web Speech APIはサポートされていません";
     }
 });
 
-searchInput.addEventListener('change', () => {
+// 検索入力を出発地と到着地に登録
+function registInput() {
   const madeIndex = searchInput.value.indexOf('から');       // 「から」のindex
   const karaIndex = searchInput.value.indexOf('まで');        // 「まで」のindex
 
@@ -637,6 +755,11 @@ searchInput.addEventListener('change', () => {
       arrivalMarker = addMarker(map,arrivalLat,arrivalLng,'到着地',arrivalIcon);    
     });
   }
+}
+
+
+searchInput.addEventListener('change', () => {
+  registInput();
 })
 
 
